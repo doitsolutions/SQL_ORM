@@ -16,8 +16,11 @@ class Validator:
             #if required check to see if value exists
             if not value:
                 raise ValueError(f"{self.column} is a required field")
-
+            
         if self.constraints.get("type"):
+            if not self.constraints.get("required") and not value:
+                return value
+            
             return self.check_value_type(value)
 
         return value
