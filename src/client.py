@@ -1,5 +1,5 @@
 import psycopg2
-from contextlib import contextmanager
+#from contextlib import contextmanager
 class Postgres():
     def __init__(self, uri):
         self.adapter = "postgres"
