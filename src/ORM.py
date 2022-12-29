@@ -1,15 +1,16 @@
 from src.validator import Validator
+
 class Field():
     def __init__(cls, **kwargs):
         for k,v in kwargs.items():
             setattr(cls, k, v)
-            
-# def Validator(column, field, value):
-#     print(column, field, value)
 
 class BaseModel():
     def __init__(self):
+        # automatically passed from database decorator that sets self.database from adapter passed
+        self.database = self.database
         self.columns = {}
+        
         for k in dir(self):
             v = getattr(self, k)
             if isinstance(v, Field):
