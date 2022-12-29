@@ -19,8 +19,16 @@ class BaseModel():
         return super().__getattribute__(key)
 
     def insert(self, **kwargs):
-
         for column in self.columns:
             Validator(column, self.columns[column], kwargs.get(column))
             
-        print("done")
+        print("done insert")
+        
+    def update(self, **kwargs):
+        for column in kwargs:
+            if column in self.columns:
+                Validator(column, self.columns[column], kwargs.get(column))
+            else:
+                print("Invalid column")
+                
+        print("done update")
