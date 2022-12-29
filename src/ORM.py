@@ -7,7 +7,7 @@ class Field():
 
 class BaseModel():
     def __init__(self):
-        # automatically passed from database decorator that sets self.database from adapter passed
+        # automatically passed from database decorator that sets self.database from driver passed
         self.database = self.database
         self.columns = {}
         

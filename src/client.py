@@ -2,7 +2,7 @@ import psycopg2
 #from contextlib import contextmanager
 class Postgres():
     def __init__(self, uri):
-        self.adapter = "postgres"
+        self.driver = "postgres"
         self.uri = uri
         # self.db_pool = self.__create_pool()
         # self.database = self.__db()
