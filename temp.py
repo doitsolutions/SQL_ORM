@@ -1,6 +1,6 @@
 from src.ORM import BaseModel, Field
 from src.decorators import Database
-from src.adapter import Postgres, Mongo
+from src.drivers import Postgres, Mongo
 
 postgres = Postgres(uri="127.0.0.1")
 
