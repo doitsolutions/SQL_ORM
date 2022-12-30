@@ -1,4 +1,4 @@
-from src.validator import Validator
+from .validator import Validator
 
 class Field():
     def __init__(cls, **kwargs):
