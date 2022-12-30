@@ -1,9 +1,7 @@
 import psycopg2
 
-
 class DatabaseDriver():
     ...
-
 
 class Postgres():
     def __init__(self, database: str = None, username: str = None, password: str = None, host: str = None, port: int = None, options: str = None):

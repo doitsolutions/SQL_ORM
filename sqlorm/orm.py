@@ -15,6 +15,7 @@ class BaseModel():
     def __init__(self):
         # automatically passed from database decorator that sets self.database from driver passed
         self.database = self.database
+        self.table = self.__class__.__name__
         self.columns = {}
         
         for k in dir(self):
@@ -26,8 +27,18 @@ class BaseModel():
         return super().__getattribute__(key)
 
     def insert(self, **kwargs):
-        for column in self.columns:
+        for column in kwargs:
+            if column not in self.columns:
+                raise Exception(f"INSERT {self.table} -> '{column}' is not a valid column")
+            
+        for column, constraints in self.columns.items():
             Validator(column, self.columns[column], kwargs.get(column))
+            
+            if constraints.get('validate'):
+                value = kwargs.get(column)
+                validate = constraints['validate']
+                
+                validate(value)
             
         print("done insert")
         
@@ -36,6 +47,6 @@ class BaseModel():
             if column in self.columns:
                 Validator(column, self.columns[column], kwargs.get(column))
             else:
-                print("Invalid column")
+                raise Exception(f"UPDATE {self.table} -> '{column}' is not a valid column")
                 
         print("done update")
