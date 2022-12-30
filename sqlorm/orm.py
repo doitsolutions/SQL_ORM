@@ -44,15 +44,21 @@ class BaseModel():
             if constraints.get('validate'):
                 value = kwargs.get(column)
                 validate = constraints['validate']
-                
+
                 validate(value)
 
             fields = (*fields, valid.column)
             values = (*values, valid.value)
-        print(fields, values)
-        self.database.insert(table=self.table, fields=tuple(fields), values=tuple(values))
 
-    def update(self, **kwargs):
+        return self.database.insert(table=self.table, fields=fields, values=values)
+
+    def update(self, conditions: dict = None, values: dict = None):
+        # TODO: validation here
+
+        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
+        values = ', '.join([f"{key}={value}" for key, value in values.items()])
+        return self.database.update(table=self.table, conditions=conditions, values=values)
+
         for column in kwargs:
             if column in self.columns:
                 Validator(self.__where(), self.table, column, self.columns[column], kwargs.get(column))

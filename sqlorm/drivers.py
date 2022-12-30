@@ -12,7 +12,8 @@ class Postgres():
 
     def connect(self, database: str = None, username: str = None, password: str = None, host: str = None, port: int = None, options: str = None):
         """
-        Function to handle connections to and from the postgres database"""
+        Function to handle connections to and from the postgres database
+        """
         try:
             connection = psycopg2.connect(
                 database=database, 
@@ -32,15 +33,20 @@ class Postgres():
         try:
             query = "INSERT INTO %s %s VALUES %s;"
             self.connection.execute(query, table, fields, values)
-            return values
+            return self.connection.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
+    def update(self, table: str = None, conditions: str = None, values: str = None):
+        query="UPDATE %s SET %s WHERE %s;"
+        self.connection.execute(query, table, values, conditions)
+        return self.connection.fetchall()
+
     def find_one(self, select: list = '*', table: str = None, conditions: tuple = None):
         try:
             query="SELECT %s FROM %s WHERE %s;"
-            self.connection.execute(query, select, table, conditions)
+            self.connection.fin(query, select, table, conditions)
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
