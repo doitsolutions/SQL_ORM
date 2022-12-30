@@ -39,9 +39,12 @@ class Postgres():
             raise psycopg2.Error(f"{error}")
 
     def update(self, table: str = None, conditions: str = None, values: str = None):
-        query="UPDATE %s SET %s WHERE %s;"
-        self.connection.execute(query, table, values, conditions)
-        return self.connection.fetchall()
+        try:
+            query="UPDATE %s SET %s WHERE %s;"
+            self.connection.execute(query, table, values, conditions)
+            return self.connection.fetchall()
+        except psycopg2.Error as error:
+            raise psycopg2.Error(f"{error}")
 
     def find_one(self, select: list = '*', table: str = None, conditions: tuple = None):
         try:
