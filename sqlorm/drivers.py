@@ -14,15 +14,15 @@ class Postgres():
         """
         Function to handle connections to and from the postgres database"""
         try:
-            # connection = psycopg2.connect(
-            #     database=database, 
-            #     user=username, 
-            #     password=password, 
-            #     host=host, 
-            #     port=port,
-            #     options=options
-            # )
-            return True# return connection.cursor()
+            connection = psycopg2.connect(
+                database=database, 
+                user=username, 
+                password=password, 
+                host=host, 
+                port=port,
+                options=options
+            )
+            return connection.cursor()
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
         except Exception as ex:
