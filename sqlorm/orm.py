@@ -1,4 +1,5 @@
 from .validator import Validator
+import inspect
 
 class Field():
     """
@@ -26,13 +27,16 @@ class BaseModel():
     def __getitem__(self, key):
         return super().__getattribute__(key)
 
+    def __where(self):
+        return inspect.stack()[1][3].upper()
+
     def insert(self, **kwargs):
         for column in kwargs:
             if column not in self.columns:
-                raise Exception(f"INSERT {self.table} -> '{column}' is not a valid column")
+                raise TypeError(f"{self.__where()} {self.table} -> '{column}' is not a valid column")
             
         for column, constraints in self.columns.items():
-            Validator(column, self.columns[column], kwargs.get(column))
+            Validator(self.__where(), self.table, column, self.columns[column], kwargs.get(column))
             
             if constraints.get('validate'):
                 value = kwargs.get(column)
@@ -45,8 +49,8 @@ class BaseModel():
     def update(self, **kwargs):
         for column in kwargs:
             if column in self.columns:
-                Validator(column, self.columns[column], kwargs.get(column))
+                Validator(self.__where(), self.table, column, self.columns[column], kwargs.get(column))
             else:
-                raise Exception(f"UPDATE {self.table} -> '{column}' is not a valid column")
+                raise TypeError(f"{self.__where()} {self.table} -> '{column}' is not a valid column")
                 
         print("done update")
