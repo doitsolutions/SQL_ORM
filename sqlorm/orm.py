@@ -1,6 +1,8 @@
 from .validator import Validator
 import inspect
 
+# TODO: what about schemas? we need to accept them some how
+
 class Field():
     """
     Class to denote a field on the model - if not present, the class variable is not recognized as a valid model field
@@ -32,8 +34,7 @@ class BaseModel():
 
     def insert(self, **kwargs):
 
-        fields = ()
-        values = ()
+        values = {}
         for column in kwargs:
             if column not in self.columns:
                 raise TypeError(f"{self.__where()} {self.table} -> '{column}' is not a valid column")
@@ -47,16 +48,13 @@ class BaseModel():
 
                 validate(value)
 
-            fields = (*fields, valid.column)
-            values = (*values, valid.value)
+            values[valid.column] = valid.value
 
-        return self.database.insert(table=self.table, fields=fields, values=values)
+        return self.database.insert(table=self.table, values=values)
 
     def update(self, conditions: dict = None, values: dict = None):
         # TODO: validation here
 
-        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
-        values = ', '.join([f"{key}={value}" for key, value in values.items()])
         return self.database.update(table=self.table, conditions=conditions, values=values)
 
         for column in kwargs:
@@ -66,3 +64,13 @@ class BaseModel():
                 raise TypeError(f"{self.__where()} {self.table} -> '{column}' is not a valid column")
                 
         print("done update")
+
+    def find_one(self, select: list = None, conditions: dict = None):
+        # TODO: validation here
+
+        return self.database.find_one(select=select, table=self.table, conditions=conditions)
+
+    def find_many(self, select: list = None, conditions: dict = None):
+        # TODO: validation here
+
+        return self.database.find_many(select=select, table=self.table, conditions=conditions)
