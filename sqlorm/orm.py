@@ -31,21 +31,27 @@ class BaseModel():
         return inspect.stack()[1][3].upper()
 
     def insert(self, **kwargs):
+
+        fields = ()
+        values = ()
         for column in kwargs:
             if column not in self.columns:
                 raise TypeError(f"{self.__where()} {self.table} -> '{column}' is not a valid column")
             
         for column, constraints in self.columns.items():
-            Validator(self.__where(), self.table, column, self.columns[column], kwargs.get(column))
-            
+            valid = Validator(self.__where(), self.table, column, self.columns[column], kwargs.get(column))
+
             if constraints.get('validate'):
                 value = kwargs.get(column)
                 validate = constraints['validate']
                 
                 validate(value)
-            
-        print("done insert")
-        
+
+            fields = (*fields, valid.column)
+            values = (*values, valid.value)
+        print(fields, values)
+        self.database.insert(table=self.table, fields=tuple(fields), values=tuple(values))
+
     def update(self, **kwargs):
         for column in kwargs:
             if column in self.columns:
