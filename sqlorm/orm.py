@@ -52,10 +52,10 @@ class BaseModel():
 
         return self.database.insert(table=self.table, values=values)
 
-    def update(self, conditions: dict = None, values: dict = None):
+    def update(self, query: dict = None, values: dict = None):
         # TODO: validation here
 
-        return self.database.update(table=self.table, conditions=conditions, values=values)
+        return self.database.update(table=self.table, query=query, values=values)
 
         for column in kwargs:
             if column in self.columns:
@@ -65,12 +65,12 @@ class BaseModel():
                 
         print("done update")
 
-    def find_one(self, select: list = None, conditions: dict = None):
+    def find_one(self, select: list = None, query: dict = None):
         # TODO: validation here
 
-        return self.database.find_one(select=select, table=self.table, conditions=conditions)
+        return self.database.find_one(select=select, table=self.table, query=query)
 
-    def find_many(self, select: list = None, conditions: dict = None):
+    def find_many(self, select: list = None, query: dict = None):
         # TODO: validation here
 
-        return self.database.find_many(select=select, table=self.table, conditions=conditions)
+        return self.database.find_many(select=select, table=self.table, query=query)

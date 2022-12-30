@@ -72,153 +72,153 @@ class Postgres():
         if schema:
             table = f"{schema}.{table}"
 
-        query = "INSERT INTO %s %s VALUES %s;"
+        sql_query = "INSERT INTO %s %s VALUES %s;"
 
         try:
             
-            self.connection.execute(query, table, fields, insert_values)
+            self.connection.execute(sql_query, table, fields, insert_values)
             return self.connection.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
-    def update(self, schema: str = None, table: str = None, conditions: dict = None, values: dict = None):
+    def update(self, schema: str = None, table: str = None, query: dict = None, values: dict = None):
         """
         Function to handle updating data into a postgres table\n
         schema - schema in database\n
         table - table in database\n
-        conditions - query of postgres search to find particular rows\n
+        query - query of postgres search to find particular rows\n
         values - object of column:values to be inserted into postgres table
         """
-        if not conditions:
-            raise ValueError(f"No conditions for updating were supplied")
+        if not query:
+            raise ValueError(f"No query for updating were supplied")
 
-        if not isinstance(conditions, dict):
-            raise TypeError(f"'conditions' must be of type: {dict} but instead found type: {type(conditions)}")
+        if not isinstance(query, dict):
+            raise TypeError(f"'query' must be of type: {dict} but instead found type: {type(query)}")
 
         if schema:
             table = f"{schema}.{table}"
 
-        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
+        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
         values = ', '.join([f"{key}={value}" for key, value in values.items()])
-        query="UPDATE %s SET %s WHERE %s;"
+        sql_query="UPDATE %s SET %s WHERE %s;"
 
         try:
-            self.connection.execute(query, table, values, conditions)
+            self.connection.execute(sql_query, table, values, query)
             return self.connection.fetchall()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
-    def find_one(self, schema: str = None, table: str = None, conditions: dict = None, select: list = None):
+    def find_one(self, schema: str = None, table: str = None, query: dict = None, select: list = None):
         """
         Function to handle finding one row from a postgres table\n
         schema - schema in database\n
         table - table in database\n
-        conditions - query of postgres search to find particular rows\n
+        query - query of postgres search to find particular rows\n
         select - columns of postgres table selecting, defaults to '*'
         """
         if not isinstance(select, (dict, type(None))):
             raise TypeError(f"'select' is not of type: {dict} or type: {type(None)} instead found type: {type(select)}")
 
-        if not conditions:
-            raise ValueError("No conditions were supplied to be found with")
+        if not query:
+            raise ValueError("No query were supplied to be found with")
 
-        if not isinstance(conditions, dict):
-            raise TypeError(f"'conditions' is not of type: {dict} or type: {type(None)} instead found type: {type(conditions)}")
+        if not isinstance(query, dict):
+            raise TypeError(f"'query' is not of type: {dict} or type: {type(None)} instead found type: {type(query)}")
 
         if schema:
             table = f"{schema}.{table}"
 
         select = tuple(select) if select else '*'
-        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
-        query="SELECT %s FROM %s WHERE %s;"
+        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
+        sql_query="SELECT %s FROM %s WHERE %s;"
 
         try:
-            self.connection.execute(query, select, table, conditions)
+            self.connection.execute(sql_query, select, table, query)
             return self.connection.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
-    def find_many(self, schema: str = None, table: str = None, conditions: str = None, select: tuple = '*'):
+    def find_many(self, schema: str = None, table: str = None, query: str = None, select: tuple = '*'):
         """
         Function to handle finding many rows from a postgres table\n
         schema - schema in database\n
         table - table in database\n
-        conditions - query of postgres search to find particular rows\n
+        query - query of postgres search to find particular rows\n
         select - columns of postgres table selecting, defaults to '*'
         """
         if not isinstance(select, (dict, type(None))):
             raise TypeError(f"'select' is not of type: {dict} or type: {type(None)} instead found type: {type(select)}")
 
-        if not conditions:
-            raise ValueError("No conditions were supplied to be found with")
+        if not query:
+            raise ValueError("No query were supplied to be found with")
 
-        if not isinstance(conditions, dict):
-            raise TypeError(f"'conditions' is not of type: {dict} or type: {type(None)} instead found type: {type(conditions)}")
+        if not isinstance(query, dict):
+            raise TypeError(f"'query' is not of type: {dict} or type: {type(None)} instead found type: {type(query)}")
 
         if schema:
             table = f"{schema}.{table}"
 
         select = tuple(select) if select else '*'
-        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
-        query="SELECT %s FROM %s WHERE %s;"
+        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
+        sql_query="SELECT %s FROM %s WHERE %s;"
 
         try:
-            self.connection.execute(query, select, table, conditions)
+            self.connection.execute(sql_query, select, table, query)
             return self.connection.fetchall()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
-    def delete_one(self, schema: str = None, table: str = None, conditions: dict = None):
+    def delete_one(self, schema: str = None, table: str = None, query: dict = None):
         """
         Function to handle deleting one row from a postgres table\n
         schema - schema in database\n
         table - table in database\n
-        conditions - query of postgres search to find particular rows\n
+        query - query of postgres search to find particular rows\n
         """
-        if not conditions:
-            raise ValueError("No conditions were supplied to be found with")
+        if not query:
+            raise ValueError("No query were supplied to be found with")
 
-        if not isinstance(conditions, dict):
-            raise TypeError(f"'conditions' is not of type: {dict} or type: {type(None)} instead found type: {type(conditions)}")
+        if not isinstance(query, dict):
+            raise TypeError(f"'query' is not of type: {dict} or type: {type(None)} instead found type: {type(query)}")
 
         if schema:
             table = f"{schema}.{table}"
 
-        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
-        query = 'DELETE FROM %s WHERE %s'
+        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
+        sql_query = 'DELETE FROM %s WHERE %s'
 
         try:
-            self.connection.execute(query, table, conditions)
+            self.connection.execute(sql_query, table, query)
             return self.connection.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
-    def delete_many(self, schema: str = None, table: str = None, conditions: dict = None):
+    def delete_many(self, schema: str = None, table: str = None, query: dict = None):
         """
         Function to handle deleting many rows from a postgres table\n
         schema - schema in database\n
         table - table in database\n
-        conditions - query of postgres search to find particular rows\n
+        query - query of postgres search to find particular rows\n
         """
-        if not conditions:
-            raise ValueError("No conditions were supplied to be found with")
+        if not query:
+            raise ValueError("No query were supplied to be found with")
 
-        if not isinstance(conditions, dict):
-            raise TypeError(f"'conditions' is not of type: {dict} or type: {type(None)} instead found type: {type(conditions)}")
+        if not isinstance(query, dict):
+            raise TypeError(f"'query' is not of type: {dict} or type: {type(None)} instead found type: {type(query)}")
 
         if schema:
             table = f"{schema}.{table}"
 
-        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
-        query = 'DELETE FROM %s WHERE %s'
+        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
+        sql_query = 'DELETE FROM %s WHERE %s'
 
         try:
-            self.connection.execute(query, table, conditions)
+            self.connection.execute(sql_query, table, query)
             return self.connection.fetchall()
 
         except psycopg2.Error as error:
