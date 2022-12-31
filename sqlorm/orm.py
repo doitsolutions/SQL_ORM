@@ -25,15 +25,20 @@ class BaseModel():
                 self.columns[k] = v.__dict__
 
     def __getitem__(self, key):
+        # TODO: write doc string here
         return super().__getattribute__(key)
 
     def __where(self):
+        # TODO: write doc string here
         return inspect.stack()[1][3].upper()
 
-    def insert(self, **kwargs):
-
-        fields = ()
-        values = ()
+    def insert(self, schema: str = None, **kwargs):
+        """
+        Function to handle insert functionality of all drivers\n
+        schema - handles schema of database if present\n
+        kwargs - columns, and key,value pair of columns being inserted
+        """
+        values = {}
         for column in kwargs:
             if column not in self.columns:
                 raise TypeError(f"{self.__where()} {self.table} -> '{column}' is not a valid column")
@@ -47,17 +52,20 @@ class BaseModel():
 
                 validate(value)
 
-            fields = (*fields, valid.column)
-            values = (*values, valid.value)
+            values[valid.column] = valid.value
 
-        return self.database.insert(table=self.table, fields=fields, values=values)
+        return self.database.insert(schema=schema, table=self.table, values=values)
 
-    def update(self, conditions: dict = None, values: dict = None):
+    def update(self, schema: str = None, query: dict = None, values: dict = None):
+        """
+        Function to handle update functionality of all drivers\n
+        schema - handles schema of database if present\n
+        query - search parameters of database\n
+        values - key, value pair of columns being updated
+        """
         # TODO: validation here
 
-        conditions = ' AND '.join([f"{key}={value}" for key, value in conditions.items()])
-        values = ', '.join([f"{key}={value}" for key, value in values.items()])
-        return self.database.update(table=self.table, conditions=conditions, values=values)
+        return self.database.update(schema=schema, table=self.table, query=query, values=values)
 
         for column in kwargs:
             if column in self.columns:
@@ -66,3 +74,54 @@ class BaseModel():
                 raise TypeError(f"{self.__where()} {self.table} -> '{column}' is not a valid column")
                 
         print("done update")
+
+    def find_one(self, schema: str = None, select: list = None, query: dict = None):
+        """
+        Function to handle find one entry functionality of all drivers\n
+        schema - handles schema of database if present\n
+        select - columns you want to select from query (if not present all will be returned) \n
+        query - search parameters of database
+        """
+        # TODO: validation here
+
+        return self.database.find_one(schema=schema, select=select, table=self.table, query=query)
+
+    def find_many(self, schema: str = None, select: list = None, query: dict = None):
+        """
+        Function to handle finding many entries functionality of all drivers\n
+        schema - handles schema of database if present\n
+        select - columns you want to select from query (if not present all will be returned) \n
+        query - search parameters of database
+        """
+        # TODO: validation here
+
+        return self.database.find_many(schema=schema, select=select, table=self.table, query=query)
+
+    def delete_one(self, schema: str = None, query: dict = None):
+        """
+        Function to handle deleting one entry functionality of all drivers\n
+        schema - handles schema of database if present\n
+        query - search parameters of database
+        """
+        # TODO: validation here
+
+        return self.database.delete_one(schema=schema, table=self.table, query=query)
+
+    def delete_many(self, schema: str = None, query: dict = None):
+        """
+        Function to handle deleting many entries functionality of all drivers\n
+        schema - handles schema of database if present\n
+        query - search parameters of database
+        """
+        # TODO: validation here
+
+        return self.database.delete_many(schema=schema, table=self.table, query=query)
+
+    def execute(self, query: str = None):
+        """
+        Function to handle query language functionality of all drivers\n
+        query - query operation for databse
+        """
+        # TODO: validation here
+
+        return self.database.execute(table=self.table, query=query)
