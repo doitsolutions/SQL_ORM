@@ -224,6 +224,24 @@ class Postgres():
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
+    def execute(self, query: str = None):
+        """
+        Function to handle direct sql injection into postgres database\n
+        query - direct sql query to postgres database
+        """
+        if not query:
+            raise ValueError("No query were supplied to be found with")
+
+        if not isinstance(query, str):
+            raise TypeError(f"'query' is not of type: {str} instead found type: {type(query)}")
+
+        try:
+            self.connection.execute(query)
+            return self.connection.fetchall()
+
+        except psycopg2.Error as error:
+            raise psycopg2.Error(f"{error}")
+
 
 class Mongo():
     def __init__(self, uri):
