@@ -5,7 +5,7 @@ Created on Sun Jan  1 17:41:18 2023
 @author: bearjew
 """
 
-qry = {"where":"table_name_col","from_table":"test part func",
+qry = {"over":"test","where":"table_name_col","from_table":"test part func",
        "select": "test=val", "group_by":"go","order_by": "group_by test"}
 
 
@@ -39,7 +39,7 @@ def sql_builder(sql_dict):
 
     sql_terms= {
     'select' : 'SELECT %s',
-    'over' : 'OVER (PARTITION BY %s) AS %s',
+    'over' : 'SELECT %s , %s OVER (PARTITION BY %s) AS %s',
     'from_table' : 'FROM %s',
     'into' : 'INTO %s',
     'where' : 'WHERE %s',
@@ -67,14 +67,19 @@ def sql_builder(sql_dict):
         user_query[i] = val_dict.get(i)
         if user_query[i] == None:
           return(-1)
+    if "over" in list(user_query.keys()) and "select" in list(user_query.keys()):
+       del user_query['select']
+       user_query.update({'over':0})
+    
     sorted_by_val = {k:v for k,v  in sorted(user_query.items(), key= lambda v: v[1])}
     
+   
     for i in sorted_by_val.keys():
+        
         query = query + sql_terms.get(i) + " \n" 
-    
+        
     return(query)
         
-    
     
 
 
