@@ -5,7 +5,8 @@ Created on Sun Jan  1 17:41:18 2023
 @author: bearjew
 """
 
-
+from psycopg2 import sql
+ 
 
 example_sql_values = {
     'select' : 'col_name as alias, col_2',
@@ -97,23 +98,29 @@ def sql_builder(sql_dict):
     
    
     for i in sorted_by_val.keys():
-        
         query = query + sql_terms.get(i) + " \n" 
-        
-    sql_dict_vals = {}
     
-    for k in sql_dict:
-        sql_dict_vals[sorted_by_val.get(k)] = sql_dict.get(k)
-        
-    sql_dict_vals_sorted = sorted(sql_dict_vals)
- 
-    sql_dict_val_after_sort = {}
+    query = sql.SQL(query).format(
+        select=sql.Literal(sql_dict.get("select")),
+        from_table=sql.Literal(sql_dict.get("from_table")),
+        into=sql.Literal(sql_dict.get("into")),
+        where=sql.Literal(sql_dict.get("where")),
+        group_by=sql.Literal(sql_dict.get("group_by")),
+        order_by=sql.Literal(sql_dict.get("order_by")),
+        delete_from=sql.Literal(sql_dict.get("delete_from")),
+        insert_into=sql.Literal(sql_dict.get("insert_into")),
+        values=sql.Literal(sql_dict.get("values")),
+        alter_table=sql.Literal(sql_dict.get("alter_table")),
+        add_col=sql.Literal(sql_dict.get("add_col")),
+        drop_col=sql.Literal(sql_dict.get("drop_col")),
+        rename_col=sql.Literal(sql_dict.get("rename_col")),
+        alter_column=sql.Literal(sql_dict.get("alter_column")),
+        modify_column=sql.Literal(sql_dict.get("modify_column")),
+        limit=sql.Literal(sql_dict.get("limit")),
+        update=sql.Literal(sql_dict.get("update")),
+        set_val=sql.Literal(sql_dict.get("set_val"))
+        )
     
-    for i in sql_dict_vals_sorted:
-        sql_dict_val_after_sort[i] = sql_dict_vals[i]    
-
-    for i in sql_dict_val_after_sort.values():
-        query = query.replace('%s', str.format(i) ,1)
         
     return(query)
     
@@ -123,5 +130,18 @@ print(test)
         
     
 
-
+#    sql_dict_vals = {}
+    
+#    for k in sql_dict:
+#        sql_dict_vals[sorted_by_val.get(k)] = sql_dict.get(k)
+        
+#    sql_dict_vals_sorted = sorted(sql_dict_vals)
+ 
+#    sql_dict_val_after_sort = {}
+    
+#   for i in sql_dict_vals_sorted:
+#        sql_dict_val_after_sort[i] = sql_dict_vals[i]    
+#
+#    for i in sql_dict_val_after_sort.values():
+#        query = query.replace('%s', str.format(i) ,1)
     
