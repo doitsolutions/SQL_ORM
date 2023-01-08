@@ -65,24 +65,24 @@ def sql_builder(sql_dict):
     query= ''
 
     sql_terms= {
-    'select' : 'SELECT {select}',
-    'from_table' : 'FROM {from_tbale}',
-    'into' : 'INTO {into}',
-    'where' : 'WHERE {where}',
-    'group_by' : 'GROUP BY {group_by}',
-    'order_by' : 'ORDER BY {order_by}',
-    'delete_from' : 'DELETE FROM {delete_from}',
-    'insert_into' : 'INSERT INTO {insert_into}',
-    'values' : 'VALUES ({values})',
-    'alter_table' : 'ALTER TABLE {alter_table}',
-    'add_col' : 'ADD {add_col}',
-    'drop_col' : 'DROP COLUMN {drop_col}',
-    'rename_col' : 'RENAME COLUMN {rename_col}',
-    'alter_column' : 'ALTER COLUMN {alter_column}',
-    'modify_column' : 'MODIFY COLUMN {modify_column}',
-    'limit' : 'LIMIT {limit}',
-    'update' : 'UPDATE {update}',
-    'set_val' : 'SET {set_val} '
+    'select' : 'SELECT {select}',   #dont validate
+    'from_table' : 'FROM {from_tbale}', #str
+    'into' : 'INTO {into}',  #list
+    'where' : 'WHERE {where}', #dont validate
+    'group_by' : 'GROUP BY {group_by}', #list
+    'order_by' : 'ORDER BY {order_by}', #list
+    'delete_from' : 'DELETE FROM {delete_from}', #str
+    'insert_into' : 'INSERT INTO {insert_into}', #str
+    'values' : 'VALUES ({values})', #list
+    'alter_table' : 'ALTER TABLE {alter_table}', #str
+    'add_col' : 'ADD {add_col}', #list
+    'drop_col' : 'DROP COLUMN {drop_col}', #list
+    'rename_col' : 'RENAME COLUMN {rename_col}', #tuple
+    'alter_column' : 'ALTER COLUMN {alter_column}', #tuple
+    'modify_column' : 'MODIFY COLUMN {modify_column}', #tuple
+    'limit' : 'LIMIT {limit}', #int
+    'update' : 'UPDATE {update}', #str
+    'set_val' : 'SET {set_val} ' #tuple
     }
 
     user_query = {}
@@ -130,18 +130,4 @@ print(test)
         
     
 
-#    sql_dict_vals = {}
-    
-#    for k in sql_dict:
-#        sql_dict_vals[sorted_by_val.get(k)] = sql_dict.get(k)
-        
-#    sql_dict_vals_sorted = sorted(sql_dict_vals)
- 
-#    sql_dict_val_after_sort = {}
-    
-#   for i in sql_dict_vals_sorted:
-#        sql_dict_val_after_sort[i] = sql_dict_vals[i]    
-#
-#    for i in sql_dict_val_after_sort.values():
-#        query = query.replace('%s', str.format(i) ,1)
-    
+
