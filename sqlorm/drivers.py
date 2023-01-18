@@ -141,7 +141,7 @@ class Postgres():
         query = ' AND '.join([f"{key}{value}" for key, value in query.items()])
 
         sql_query = sql.SQL("SELECT {select} from {table} WHERE {query};").format(select=sql.SQL(select), table=sql.SQL(table), query=sql.SQL(query))
- 
+
         try:
             self.cursor.execute(sql_query)
             self.connection.commit()
@@ -275,7 +275,7 @@ class Postgres():
             raise TypeError(f"'query' is not of type: {str} instead found type: {type(query)}")
 
         try:
-            self.cursor.execute(query + ' RETURNING *;', (values,))
+            self.cursor.execute(query, (values,))
             self.connection.commit()
             return self.cursor.fetchall()
 
