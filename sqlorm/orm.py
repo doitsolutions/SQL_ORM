@@ -125,3 +125,12 @@ class BaseModel():
         # TODO: validation here
 
         return self.database.execute(table=self.table, query=query)
+
+    def execute_query(self, query: str = None):
+        """
+        Function to handle query language functionality of all drivers\n
+        query - query operation for databse
+        """
+        # TODO: validation here
+
+        return self.database.execute_query(table=self.table, query=query)
