@@ -2,3 +2,6 @@ Make default field types
 Make unique requirement
 Finish Mongo Driver
 Take list of values into tuple for execute_query
+Create Testing
+retry postgres connection a couple times (5)
+convert to dict function

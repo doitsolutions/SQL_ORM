@@ -83,6 +83,7 @@ class Postgres():
             return self.cursor.fetchone()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
     def update(self, schema: str = None, table: str = None, query: dict = None, values: dict = None):
@@ -113,6 +114,7 @@ class Postgres():
             return self.cursor.fetchone()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
     def find_one(self, schema: str = None, table: str = None, query: dict = None, select: list = None):
@@ -146,6 +148,7 @@ class Postgres():
             return self.cursor.fetchone()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
     def find_many(self, schema: str = None, table: str = None, query: str = None, select: tuple = '*'):
@@ -179,6 +182,7 @@ class Postgres():
             return self.cursor.fetchall()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
     def delete_one(self, schema: str = None, table: str = None, query: dict = None):
@@ -207,6 +211,7 @@ class Postgres():
             return self.cursor.fetchone()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
     def delete_many(self, schema: str = None, table: str = None, query: dict = None):
@@ -235,6 +240,7 @@ class Postgres():
             return self.cursor.fetchall()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
     def execute(self, query: str = None):
@@ -254,6 +260,7 @@ class Postgres():
             return self.cursor.fetchall()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
     def execute_sql(self, query: str = None, values: tuple = None):
@@ -273,6 +280,7 @@ class Postgres():
             return self.cursor.fetchall()
 
         except psycopg2.Error as error:
+            self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
 
