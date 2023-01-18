@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2 import sql
 
 
 class DatabaseDriver():
@@ -21,6 +22,7 @@ class Postgres():
     def __init__(self, database: str = None, username: str = None, password: str = None, host: str = None, port: int = None, options: str = None):
         self.driver = "postgres"
         self.connection = self.connect(database, username, password, host, port, options)
+        self.cursor = self.connection.cursor()
 
     def connect(self, database: str = None, username: str = None, password: str = None, host: str = None, port: int = None, options: str = None):
         """
@@ -41,7 +43,7 @@ class Postgres():
                 port=port,
                 options=options
             )
-            return connection.cursor()
+            return connection
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
@@ -66,18 +68,19 @@ class Postgres():
             raise TypeError(f"'values' must be of type: {dict} but instead found type: {type(values)}")
 
         for key, value in values.items():
-            fields = (*fields, key)
+            fields = (*fields, sql.SQL(key))
             insert_values = (*insert_values, value)
 
         if schema:
             table = f"{schema}.{table}"
 
-        sql_query = "INSERT INTO %s %s VALUES %s;"
+
+        sql_query = sql.SQL("INSERT INTO {table} ({fields}) VALUES {values} RETURNING *;").format(table=sql.SQL(table), fields=sql.SQL(', ').join(fields), values=sql.Literal(insert_values))
 
         try:
-            
-            self.connection.execute(sql_query, (table, fields, insert_values,))
-            return self.connection.fetchone()
+            self.cursor.execute(sql_query)
+            self.connection.commit()
+            return self.cursor.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
@@ -99,13 +102,15 @@ class Postgres():
         if schema:
             table = f"{schema}.{table}"
 
-        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
+        query = ' AND '.join([f"{key}{value}" for key, value in query.items()])
         values = ', '.join([f"{key}={value}" for key, value in values.items()])
-        sql_query="UPDATE %s SET %s WHERE %s;"
+        
+        sql_query = sql.SQL("UPDATE {table} SET {values} WHERE {query} RETURNING *;").format(table=sql.SQL(table), values=sql.SQL(values), query=sql.SQL(query))
 
         try:
-            self.connection.execute(sql_query, (table, values, query,))
-            return self.connection.fetchall()
+            self.cursor.execute(sql_query)
+            self.connection.commit()
+            return self.cursor.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
@@ -118,8 +123,8 @@ class Postgres():
         query - query of postgres search to find particular rows\n
         select - columns of postgres table selecting, defaults to '*'
         """
-        if not isinstance(select, (dict, type(None))):
-            raise TypeError(f"'select' is not of type: {dict} or type: {type(None)} instead found type: {type(select)}")
+        if not isinstance(select, (list, type(None))):
+            raise TypeError(f"'select' is not of type: {list} or type: {type(None)} instead found type: {type(select)}")
 
         if not query:
             raise ValueError("No query were supplied to be found with")
@@ -130,13 +135,15 @@ class Postgres():
         if schema:
             table = f"{schema}.{table}"
 
-        select = tuple(select) if select else '*'
-        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
-        sql_query="SELECT %s FROM %s WHERE %s;"
+        select = ', '.join(select) if select else '*'
+        query = ' AND '.join([f"{key}{value}" for key, value in query.items()])
 
+        sql_query = sql.SQL("SELECT {select} from {table} WHERE {query};").format(select=sql.SQL(select), table=sql.SQL(table), query=sql.SQL(query))
+ 
         try:
-            self.connection.execute(sql_query, (select, table, query,))
-            return self.connection.fetchone()
+            self.cursor.execute(sql_query)
+            self.connection.commit()
+            return self.cursor.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
@@ -149,8 +156,8 @@ class Postgres():
         query - query of postgres search to find particular rows\n
         select - columns of postgres table selecting, defaults to '*'
         """
-        if not isinstance(select, (dict, type(None))):
-            raise TypeError(f"'select' is not of type: {dict} or type: {type(None)} instead found type: {type(select)}")
+        if not isinstance(select, (list, type(None))):
+            raise TypeError(f"'select' is not of type: {list} or type: {type(None)} instead found type: {type(select)}")
 
         if not query:
             raise ValueError("No query were supplied to be found with")
@@ -161,13 +168,15 @@ class Postgres():
         if schema:
             table = f"{schema}.{table}"
 
-        select = tuple(select) if select else '*'
-        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
-        sql_query="SELECT %s FROM %s WHERE %s;"
+        select = ', '.join(select) if select else '*'
+        query = ' AND '.join([f"{key}{value}" for key, value in query.items()])
+        
+        sql_query = sql.SQL("SELECT {select} from {table} WHERE {query};").format(select=sql.SQL(select), table=sql.SQL(table), query=sql.SQL(query))
 
         try:
-            self.connection.execute(sql_query, (select, table, query,))
-            return self.connection.fetchall()
+            self.cursor.execute(sql_query)
+            self.connection.commit()
+            return self.cursor.fetchall()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
@@ -188,12 +197,14 @@ class Postgres():
         if schema:
             table = f"{schema}.{table}"
 
-        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
-        sql_query = 'DELETE FROM %s WHERE %s'
+        query = ' AND '.join([f"{key}{value}" for key, value in query.items()])
+
+        sql_query = sql.SQL("DELETE FROM {table} WHERE {query} RETURNING *;").format(table=sql.SQL(table), query=sql.SQL(query))
 
         try:
-            self.connection.execute(sql_query, (table, query,))
-            return self.connection.fetchone()
+            self.cursor.execute(sql_query)
+            self.connection.commit()
+            return self.cursor.fetchone()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
@@ -214,12 +225,14 @@ class Postgres():
         if schema:
             table = f"{schema}.{table}"
 
-        query = ' AND '.join([f"{key}={value}" for key, value in query.items()])
-        sql_query = 'DELETE FROM %s WHERE %s'
-
+        query = ' AND '.join([f"{key}{value}" for key, value in query.items()])
+        
+        sql_query = sql.SQL("DELETE FROM {table} WHERE {query} RETURNING *;").format(table=sql.SQL(table), query=sql.SQL(query))
+        
         try:
-            self.connection.execute(sql_query, (table, query,))
-            return self.connection.fetchall()
+            self.cursor.execute(sql_query)
+            self.connection.commit()
+            return self.cursor.fetchall()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
@@ -236,13 +249,14 @@ class Postgres():
             raise TypeError(f"'query' is not of type: {str} instead found type: {type(query)}")
 
         try:
-            self.connection.execute(query)
-            return self.connection.fetchall()
+            self.cursor.execute(query)
+            self.connection.commit()
+            return self.cursor.fetchall()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
-    def execute_query(self, query: str = None, values: tuple = None):
+    def execute_sql(self, query: str = None, values: tuple = None):
         """
         Function to handle direct sql injection into postgres database\n
         query - direct sql query to postgres database
@@ -254,8 +268,9 @@ class Postgres():
             raise TypeError(f"'query' is not of type: {str} instead found type: {type(query)}")
 
         try:
-            self.connection.execute(query, values)
-            return self.connection.fetchall()
+            self.cursor.execute(query + ' RETURNING *;', (values,))
+            self.connection.commit()
+            return self.cursor.fetchall()
 
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
