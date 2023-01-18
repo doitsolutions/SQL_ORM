@@ -126,11 +126,12 @@ class BaseModel():
 
         return self.database.execute(table=self.table, query=query)
 
-    def execute_query(self, query: str = None):
+    def execute_query(self, query: str = None, values: tuple = None):
         """
         Function to handle query language functionality of all drivers\n
-        query - query operation for databse
+        query - query operation for databse\n
+        values - values of query to avoid sql injection if desired
         """
         # TODO: validation here
 
-        return self.database.execute_query(table=self.table, query=query)
+        return self.database.execute_query(table=self.table, query=query, values=values)
