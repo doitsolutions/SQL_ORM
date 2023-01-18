@@ -76,7 +76,7 @@ class Postgres():
 
         try:
             
-            self.connection.execute(sql_query, table, fields, insert_values)
+            self.connection.execute(sql_query, (table, fields, insert_values,))
             return self.connection.fetchone()
 
         except psycopg2.Error as error:
@@ -104,7 +104,7 @@ class Postgres():
         sql_query="UPDATE %s SET %s WHERE %s;"
 
         try:
-            self.connection.execute(sql_query, table, values, query)
+            self.connection.execute(sql_query, (table, values, query,))
             return self.connection.fetchall()
 
         except psycopg2.Error as error:
@@ -135,7 +135,7 @@ class Postgres():
         sql_query="SELECT %s FROM %s WHERE %s;"
 
         try:
-            self.connection.execute(sql_query, select, table, query)
+            self.connection.execute(sql_query, (select, table, query,))
             return self.connection.fetchone()
 
         except psycopg2.Error as error:
@@ -166,7 +166,7 @@ class Postgres():
         sql_query="SELECT %s FROM %s WHERE %s;"
 
         try:
-            self.connection.execute(sql_query, select, table, query)
+            self.connection.execute(sql_query, (select, table, query,))
             return self.connection.fetchall()
 
         except psycopg2.Error as error:
@@ -192,7 +192,7 @@ class Postgres():
         sql_query = 'DELETE FROM %s WHERE %s'
 
         try:
-            self.connection.execute(sql_query, table, query)
+            self.connection.execute(sql_query, (table, query,))
             return self.connection.fetchone()
 
         except psycopg2.Error as error:
@@ -218,7 +218,7 @@ class Postgres():
         sql_query = 'DELETE FROM %s WHERE %s'
 
         try:
-            self.connection.execute(sql_query, table, query)
+            self.connection.execute(sql_query, (table, query,))
             return self.connection.fetchall()
 
         except psycopg2.Error as error:
@@ -242,7 +242,7 @@ class Postgres():
         except psycopg2.Error as error:
             raise psycopg2.Error(f"{error}")
 
-    def execute_query(self, query: str = None):
+    def execute_query(self, query: str = None, values: tuple = None):
         """
         Function to handle direct sql injection into postgres database\n
         query - direct sql query to postgres database
@@ -254,7 +254,7 @@ class Postgres():
             raise TypeError(f"'query' is not of type: {str} instead found type: {type(query)}")
 
         try:
-            self.connection.execute(query)
+            self.connection.execute(query, values)
             return self.connection.fetchall()
 
         except psycopg2.Error as error:
