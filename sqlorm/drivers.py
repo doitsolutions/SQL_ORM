@@ -275,7 +275,7 @@ class Postgres():
             raise TypeError(f"'query' is not of type: {str} instead found type: {type(query)}")
 
         try:
-            self.cursor.execute(query, (values,))
+            self.cursor.execute(query, values)
             self.connection.commit()
             return self.cursor.fetchall()
 
