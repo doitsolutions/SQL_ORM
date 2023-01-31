@@ -151,7 +151,7 @@ class Postgres():
             self.cursor.execute("rollback")
             raise psycopg2.Error(f"{error}")
 
-    def find_many(self, schema: str = None, table: str = None, query: str = None, select: tuple = '*'):
+    def find_many(self, schema: str = None, table: str = None, query: str = None, select: list = '*'):
         """
         Function to handle finding many rows from a postgres table\n
         schema - schema in database\n
