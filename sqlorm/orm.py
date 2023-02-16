@@ -124,7 +124,7 @@ class BaseModel():
         """
         # TODO: validation here
 
-        return self.database.execute(table=self.table, query=query)
+        return self.database.execute(query=query)
 
     def execute_sql(self, query: str = None, values: tuple = None):
         """
